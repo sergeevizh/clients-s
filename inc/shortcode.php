@@ -8,7 +8,7 @@ Description: Плагин добавляет возможсноть вывода
 
 
 //Posts shortcode swiper
-class PostsSwiper_Singleton {
+class ClientsSwiper_Singleton {
 private static $_instance = null;
 private function __construct() {
   add_shortcode('clients-s', array($this, 'posts_swiper_sc_callback'));
@@ -16,13 +16,6 @@ private function __construct() {
   add_action('wp_head', array($this, 'hook_css'));
 }
 
-  function wp_enqueue_scripts_cb(){
-    wp_register_style( 'swiper', plugin_dir_url(__FILE__).'swiper/dist/css/swiper.min.css', '', $ver = '3.1.0', $media = 'all' );
-    wp_enqueue_style( 'swiper' );
-
-    wp_register_script( 'swiper', plugin_dir_url(__FILE__).'swiper/dist/js/swiper.jquery.min.js', array('jquery'), $ver = '3.1.0' );
-    wp_enqueue_script( 'swiper' );
-  }
 
 
   function posts_swiper_sc_callback($atts) {
@@ -67,50 +60,52 @@ private function __construct() {
      ob_start();
 
      ?>
-      <div class="swiper-container">
-          <div class="swiper-wrapper">
-            <?php foreach($posts as $post): setup_postdata($post); ?>
-              <?php if($url): ?>
-                <a href="<?php echo get_the_permalink($post->ID); ?>">
-              <?php endif; ?>
-                <div class="swiper-slide">
-                  <div class="post-swiper-thumbnail-title">
-                    <?php echo get_the_post_thumbnail( $post->ID, 'thumbnail' ); ?>
-                  </div>
-
-                  <?php if($show_title): ?>
-                    <div>
-                      <strong><?php echo $post->post_title; ?></strong>
+      <div class="clients-sc-wrapper">
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+              <?php foreach($posts as $post): setup_postdata($post); ?>
+                <?php if($url): ?>
+                  <a href="<?php echo get_the_permalink($post->ID); ?>">
+                <?php endif; ?>
+                  <div class="swiper-slide">
+                    <div class="post-swiper-thumbnail-title">
+                      <?php echo get_the_post_thumbnail( $post->ID, 'thumbnail' ); ?>
                     </div>
-                  <?php endif; ?>
-                </div>
-              <?php if($url): ?>
-                </a>
-              <?php endif; ?>
 
-            <?php endforeach; wp_reset_postdata(); ?>
+                    <?php if($show_title): ?>
+                      <div>
+                        <strong><?php echo $post->post_title; ?></strong>
+                      </div>
+                    <?php endif; ?>
+                  </div>
+                <?php if($url): ?>
+                  </a>
+                <?php endif; ?>
 
-          </div>
-          <!-- Add Arrows -->
-           <div class="swiper-button-next"></div>
-           <div class="swiper-button-prev"></div>
-      </div>
+              <?php endforeach; wp_reset_postdata(); ?>
 
-      <!-- Initialize Swiper -->
-      <script>
-        jQuery(document).ready(function($) {
+            </div>
+            <!-- Add Arrows -->
+             <div class="swiper-button-next"></div>
+             <div class="swiper-button-prev"></div>
+        </div>
 
-          var swiper = new Swiper('.swiper-container', {
-              nextButton: '.swiper-button-next',
-              prevButton: '.swiper-button-prev',
-              slidesPerView: 5,
-              spaceBetween:  12,
-              autoplay: 2500,
-              autoplayDisableOnInteraction: false,
-              loop: true
+        <!-- Initialize Swiper -->
+        <script>
+          jQuery(document).ready(function($) {
+
+            var swiper = new Swiper('.clients-sc-wrapper .swiper-container', {
+                nextButton: '.clients-sc-wrapper .swiper-button-next',
+                prevButton: '.clients-sc-wrapper .swiper-button-prev',
+                slidesPerView: 5,
+                spaceBetween:  33,
+                autoplay: 2500,
+                autoplayDisableOnInteraction: false,
+                loop: true
+            });
           });
-        });
-      </script>
+        </script>
+      </div>
      <?php
 
      $html = ob_get_contents();
@@ -119,28 +114,37 @@ private function __construct() {
      return $html;
   }
 
-function hook_css(){
 
-  $post = get_post();
 
-  if(has_shortcode( $post->post_content, 'clients-s' )):
-    ?>
-      <style>
-        .swiper-container {
-            width: 100%;
-            height: 100%;
-        }
-        .swiper-slide {
-            min-height: 100px;
-        }
+  function wp_enqueue_scripts_cb(){
 
-        .swiper-slide img {
-          width: auto;
-        }
-      </style>
-    <?php
-  endif;
-}
+      wp_register_style( 'swiper', plugin_dir_url(__FILE__).'swiper/dist/css/swiper.min.css', '', $ver = '3.0.0', $media = 'all' );
+      wp_enqueue_style( 'swiper' );
+
+      wp_register_script( 'swiper', plugin_dir_url(__FILE__).'swiper/dist/js/swiper.jquery.min.js', array('jquery'), $ver = '3.0.0' );
+      wp_enqueue_script( 'swiper' );
+
+  }
+
+  function hook_css(){
+
+    $post = get_post();
+
+    if(has_shortcode( $post->post_content, 'clients-s' )):
+      ?>
+        <style>
+          .clients-sc-wrapper .swiper-container {
+              width: 100%;
+              height: 100%;
+          }
+          .clients-sc-wrapper .swiper-slide {
+              min-height: 100px;
+          }
+
+        </style>
+      <?php
+    endif;
+  }
 
 protected function __clone() {
 	// ограничивает клонирование объекта
@@ -152,4 +156,4 @@ static public function getInstance() {
 	}
 	return self::$_instance;
 }
-} $ThePostsSwiper = PostsSwiper_Singleton::getInstance();
+} $TheClientsSwiper = ClientsSwiper_Singleton::getInstance();
